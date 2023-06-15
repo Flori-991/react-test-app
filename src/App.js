@@ -3,7 +3,7 @@ import axios, {Axios} from "axios";
 import './App.css';
 
 const App = () => {
-    const placeHolder = 'Search for word';
+    const placeHolder = 'Look up meanings';
     const [wordToSearch, setWordToSearch] = useState('');
     const [apiResponse, setApiResponse] = useState(null);
 
