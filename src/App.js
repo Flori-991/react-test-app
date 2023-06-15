@@ -5,33 +5,36 @@ import './App.css';
 const App = () => {
     const placeHolder = 'Search for word';
     const [wordToSearch, setWordToSearch] = useState('');
-    const [dictEntry, setDictEntry] = useState('');
     const [apiResponse, setApiResponse] = useState(null);
 
-    const getDictEntry = async () => {
-        //setApiResponse(await axios.get("https://api.dictionaryapi.dev/api/v2/entries/en/" + wordToSearch));
-
-        axios.get("https://api.dictionaryapi.dev/api/v2/entries/en/" + wordToSearch)
-            .catch(function (error) {setApiResponse(null)})
-            .then(res => setApiResponse(res));
-
-        console.log(apiResponse);
-
-        if (apiResponse !== null && apiResponse !== undefined ){
-            setDictEntry(apiResponse.data[0].phonetic);
+    const searchOnEnter = (event) => {
+        if (event.key === 'Enter'){
+            getDictApiResponse(wordToSearch);
         }
-        else {
-            setDictEntry('This is not in our database, sorry!')
+    }
+
+    const getDictApiResponse = async () => {
+        try {
+            setApiResponse(await axios.get("https://api.dictionaryapi.dev/api/v2/entries/en/" + wordToSearch));
+        }
+        catch (err){
         }
     }
 
     return (
         <div className="App">
-            <input placeholder={placeHolder} id="wordToSearch" onChange={event => setWordToSearch(event.target.value)}/>
-            <button onClick={getDictEntry}>Search</button>
-            <h1>{dictEntry}</h1>
+            <input placeholder={placeHolder} onKeyDown={searchOnEnter} onChange={event => setWordToSearch(event.target.value)}/>
+            <button onClick={() => getDictApiResponse(wordToSearch)}>Search</button>
+            {apiResponse && (
+                <>
+                    <p>{apiResponse.data[0].phonetic}</p>
+                    {apiResponse.data[0].meanings.map(meaning => (<p key={meaning.definitions[0].definition}>{meaning.definitions[0].definition}</p>))}
+                </>
+            )}
         </div>
     );
 }
+
+
 
 export default App;
